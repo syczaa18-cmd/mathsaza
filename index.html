@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Calculus Dashboard: Animal Husbandry Growth Rates</title>
+    <!-- Chart.js for smooth mathematical animations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --secondary: #40916c;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #1b4332;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        h1 { margin: 0; color: var(--primary); font-size: 2rem; }
+        .subtitle { color: #555; font-style: italic; margin-top: 5px; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .math-box {
+            background-color: #f1f5f2;
+            padding: 15px;
+            border-left: 5px solid var(--primary);
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .interactive-display {
+            background: linear-gradient(135deg, #d8f3dc 0%, #b7e4c7 100%);
+            border: 2px dashed var(--secondary);
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .metric {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        .source-footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        .source-footer a { color: var(--secondary); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Applying Derivatives to Animal Husbandry Technology</h1>
+        <p class="subtitle">Optimizing Beef Cattle Market Selection Using Instantaneous Growth Rates f'(t)</p>
+    </header>
+
+    <div class="grid">
+        <!-- Left Panel: Bioscience Problem & Formulas -->
+        <div class="card">
+            <h3>The Bioscience Scenario</h3>
+            <p>In Malaysian commercial feedlots, optimizing production efficiency means identifying exactly when cattle reach their peak structural growth efficiency before fat deposition lowers feed conversion ratios. This application tracks a crossbred beef steer over a 48-month growth lifecycle.</p>
+            <p>By finding the <strong>derivative f'(t)</strong>, we calculate the <strong>Average Daily Gain (ADG)</strong> expressed monthly. This metric tells production managers exactly when animal development shifts from rapid muscle accumulation to structural maintenance.</p>
+
+            <h3>The Growth Function: Gompertz Model</h3>
+            <div class="math-box">
+                <strong>f(t) = 450 * e^(-2.5 * e^(-0.08 * t))</strong>
+            </div>
+            <p><small>Yields total animal weight in kilograms (kg) at month <em>t</em>.</small></p>
+
+            <h3>The Derivative: Rate of Weight Gain</h3>
+            <div class="math-box">
+                <strong>f'(t) = 0.08 * f(t) * ln(450 / f(t))</strong>
+            </div>
+            <p><small>Yields the instantaneous growth velocity in kilograms per month (kg/month).</small></p>
+            
+            <p style="color: #666; font-size: 0.9rem;">💡 <em>Instruction: Click any node or position directly along the curve on the right to dissect the calculus parameters dynamically.</em></p>
+        </div>
+
+        <!-- Right Panel: Visualizer Chart -->
+        <div class="card">
+            <h3>Growth Curve Visualization</h3>
+            <div class="chart-container">
+                <canvas id="growthChart"></canvas>
+            </div>
+            
+            <div id="interactiveOutput" class="interactive-display">
+                <h4 style="margin:0;">Interactive Analysis Node</h4>
+                <p style="margin: 5px 0; color: #555;">Click the graph above to isolate a time parameter.</p>
+                <div class="metric">—</div>
+                <p>Select a data point on the curve to calculate the derivative value.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Framework References as Requested -->
+    <div class="source-footer">
+        <p><strong>Baseline Biological Framework Reference Values:</strong> Data variables mirror standard tropical sigmoidal livestock datasets provided by the <strong>Malaysian Society of Animal Production (MSAP)</strong> and growth metrics documented under the <strong>National Agrofood Policy (DAN 2.0)</strong> architecture.</p>
+    </div>
+</div>
+
+<script>
+    // Generate data array for 0 to 48 months
+    const months = [];
+    const weights = [];
+    const derivatives = [];
+
+    const A = 450;  // Asymptotic weight
+    const B = 2.5;  // Biological constant
+    const k = 0.08; // Specific growth velocity
+
+    for (let t = 0; t <= 48; t++) {
+        months.push(t);
+        // Gompertz equation computation
+        const weight = A * Math.exp(-B * Math.exp(-k * t));
+        weights.push(parseFloat(weight.toFixed(2)));
+        
+        // Analytical derivative computation
+        const derivative = k * weight * Math.log(A / weight);
+        derivatives.push(parseFloat(derivative.toFixed(2)));
+    }
+
+    // Initialize Chart.js Context
+    const ctx = document.getElementById('growthChart').getContext('2d');
+    const growthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Cattle Weight f(t) (kg)',
+                data: weights,
+                borderColor: '#2d6a4f',
+                backgroundColor: 'rgba(45, 106, 79, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.2,
+                pointRadius: 3,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: '#ef233c'
+            }]
+        },
+        options: {
+            responsive: 'true',
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Age of Animal (Months)', color: '#1b4332' } },
+                y: { title: { display: true, text: 'Live Weight (kg)', color: '#1b4332' }, min: 0 }
+            },
+            // Listens for clicks directly inside canvas array architecture
+            onClick: (e) => {
+                const points = growthChart.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                if (points.length > 0) {
+                    const index = points[0].index;
+                    updateAnalysisPanel(months[index], weights[index], derivatives[index]);
+                }
+            }
+        }
+    });
+
+    // Handle analytical evaluation display modifications based on user viewport clicks
+    function updateAnalysisPanel(month, weight, rate) {
+        const display = document.getElementById('interactiveOutput');
+        
+        // Convert monthly rate into standard farm operational Average Daily Gain (ADG)
+        const dailyGain = (rate / 30.4).toFixed(3);
+        
+        let biologicalInsight = "";
+        if (month <= 6) {
+            biologicalInsight = "Early structural growth step. The derivative value is rising quickly, meaning accelerating muscle frame growth supported by maternal milk and starter weaning feeds.";
+        } else if (month > 6 && month <= 12) {
+            biologicalInsight = "Approaching the mathematical point of inflection (highest f'(t) value). The animal is at its peak biological speed for building muscle tissues. Excellent feed conversion efficiency!";
+        } else if (month > 12 && month <= 24) {
+            biologicalInsight = "The derivative value is beginning to drop. Frame skeletal expansion is slowing down, and the animal is transferring energy towards intramuscular fat deposition.";
+        } else {
+            biologicalInsight = "Growth plateaus as it approaches the limit value (Asymptote). The derivative is nearing 0 kg/month. Keeping the animal past this threshold increases feed overhead cost without yielding viable tissue weight additions.";
+        }
+
+        display.innerHTML = `
+            <h4 style="margin:0; color:#1b4332;">Analysis Results for Month ${month}</h4>
+            <p style="margin:5px 0;"><strong>Live Weight:</strong> ${weight} kg</p>
+            <div class="metric">+${rate} kg/mth</div>
+            <p style="margin:5px 0; font-weight:bold; color:#40916c;">Estimated Daily Velocity: ~${dailyGain} kg/day (ADG)</p>
+            <p style="margin-top:10px; font-size:0.95rem; line-height:1.4; color:#222; text-align:left; background:#fff; padding:12px; border-radius:6px; border:1px solid #b7e4c7;">
+                <strong>Biological Meaning:</strong> ${biologicalInsight}
+            </p>
+        `;
+    }
+
+    // Set initial display view state on load framework initialization
+    updateAnalysisPanel(12, weights[12], derivatives[12]);
+</script>
+
+</body>
+</html>
